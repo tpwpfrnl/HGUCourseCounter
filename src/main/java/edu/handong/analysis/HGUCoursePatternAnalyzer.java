@@ -55,9 +55,14 @@ public class HGUCoursePatternAnalyzer {
 	private HashMap<String,Student> loadStudentCourseRecords(ArrayList<String> lines) {
 		
 		// TODO: Implement this method
-		HashMap<String, Student> hashMap = new HashMap<String, Student>();
+		students = new HashMap<String, Student>();
+		for(String line:lines) {
+			Student stu = new Student(line);
+			String key = stu.getStudentId();
+			students.put(key, stu);
+		}
 		
-		return hashMap; // do not forget to return a proper variable.
+		return students; // do not forget to return a proper variable.
 	}
 
 	/**
@@ -77,6 +82,11 @@ public class HGUCoursePatternAnalyzer {
 		
 		// TODO: Implement this method
 		ArrayList<String> lines = new ArrayList<String>();
+		Student s1 = new Student(null);
+		for(String line:lines) {
+			s1.getNumCourseInNthSemester(Integer.parseInt(line));
+		}
+		
 		return lines; // do not forget to return a proper variable.
 	}
 }
