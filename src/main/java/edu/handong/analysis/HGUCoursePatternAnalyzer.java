@@ -7,8 +7,8 @@ import java.util.TreeMap;
 
 import edu.handong.analysis.datamodel.Course;
 import edu.handong.analysis.datamodel.Student;
-import edu.handong.analysise.utils.NotEnoughArgumentException;
-import edu.handong.analysise.utils.Utils;
+import edu.handong.analysis.utils.NotEnoughArgumentException;
+import edu.handong.analysis.utils.Utils;
 
 public class HGUCoursePatternAnalyzer {
 
@@ -55,8 +55,9 @@ public class HGUCoursePatternAnalyzer {
 	private HashMap<String,Student> loadStudentCourseRecords(ArrayList<String> lines) {
 		
 		// TODO: Implement this method
+		HashMap<String, Student> hashMap = new HashMap<String, Student>();
 		
-		return null; // do not forget to return a proper variable.
+		return hashMap; // do not forget to return a proper variable.
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class HGUCoursePatternAnalyzer {
 	private ArrayList<String> countNumberOfCoursesTakenInEachSemester(Map<String, Student> sortedStudents) {
 		
 		// TODO: Implement this method
-		
-		return null; // do not forget to return a proper variable.
+		ArrayList<String> lines = new ArrayList<String>();
+		return lines; // do not forget to return a proper variable.
 	}
 }
