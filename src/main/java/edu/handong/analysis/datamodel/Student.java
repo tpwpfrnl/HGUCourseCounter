@@ -18,15 +18,27 @@ public class Student {
 	}
 	
 	public HashMap<String, Integer> getSemestersByYearAndSemester(){
-		HashMap<String, Integer> hashMap = new HashMap<String, Integer>();
-		ArrayList<String> arrayList = new ArrayList<String>();
-
-
-		return hashMap;
+		semestersByYearAndSemester = new HashMap<String, Integer>();
+//		ArrayList<String> arrayList = new ArrayList<String>();
+		int index = 1;
+		for(Course curs:coursesTaken) {
+			String Seme = curs.getYearTaken() + "-" + curs.getSemesterCourseTaken();
+			semestersByYearAndSemester.put(Seme, index);
+			index++;
+		}
+		
+		return semestersByYearAndSemester;
 	}
 	
 	public int getNumCourseInNthSemester(int semester) {
-		return semester; //fix
+		int count = 0;
+		for(Course curs2:coursesTaken) {
+			String key = curs2.getYearTaken() + "-" + curs2.getSemesterCourseTaken();
+			if(semestersByYearAndSemester.get(key).equals(semester)) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public String getStudentId() {
