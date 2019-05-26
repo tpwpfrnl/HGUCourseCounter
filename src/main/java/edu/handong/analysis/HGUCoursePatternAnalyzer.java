@@ -53,13 +53,20 @@ public class HGUCoursePatternAnalyzer {
 	 * @return
 	 */
 	private HashMap<String,Student> loadStudentCourseRecords(ArrayList<String> lines) {
-		
+		Student stu = null;
 		// TODO: Implement this method
 		students = new HashMap<String, Student>();
 		for(String line:lines) {
-			Student stu = new Student(line);
-			String key = stu.getStudentId();
-			students.put(key, stu);
+			String key = line.trim().split(",")[0];
+			if(students.containsKey(key) == false) {
+				stu = new Student(key);
+				students.put(key, stu);
+				Course course = new Course(line);
+				stu.addCourse(course);
+			}else {
+				Course course = new Course(line);
+				stu.addCourse(course);
+			}
 		}
 		
 		return students; // do not forget to return a proper variable.
@@ -81,12 +88,15 @@ public class HGUCoursePatternAnalyzer {
 	private ArrayList<String> countNumberOfCoursesTakenInEachSemester(Map<String, Student> sortedStudents) {
 		
 		// TODO: Implement this method
-		ArrayList<String> lines = new ArrayList<String>();
-		Student s1 = new Student(null);
-		for(String line:lines) {
-			s1.getNumCourseInNthSemester(Integer.parseInt(line));
+		ArrayList<String> number = new ArrayList<String>();
+		for(Student stu2:sortedStudents.values()) {
+			Integer lastSemester = stu2.getSemestersByYearAndSemester().size();
+			for(Integer takenSemester:stu2.getSemestersByYearAndSemester().values()) {
+				String result = stu2.getStudentId()+","+Integer.toString(lastSemester)+","+Integer.toString(takenSemester)+","+stu2.getNumCourseInNthSemester(takenSemester);
+				number.add(result);	
+			}
 		}
 		
-		return lines; // do not forget to return a proper variable.
+		return number; // do not forget to return a proper variable.
 	}
 }

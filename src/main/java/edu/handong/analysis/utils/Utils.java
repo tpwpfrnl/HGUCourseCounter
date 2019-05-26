@@ -1,11 +1,10 @@
 package edu.handong.analysis.utils;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -33,16 +32,33 @@ public class Utils {
 		return read;
 	}
 	public static void writeAFile(ArrayList<String> lines, String targetFileName) {
+//		try {
+//			File file = new File(targetFileName);
+//			FileOutputStream fOutS = new FileOutputStream(file);
+//			DataOutputStream dOutS = new DataOutputStream(fOutS);
+//			
+//			for(String line:lines) {
+//				dOutS.write((line+"\n").getBytes());
+//			}
+//			dOutS.close();
+//			fOutS.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+////			e.printStackTrace();
+//			System.err.println("The file path does not exist. Please check your CLI argument!");
+//			System.exit(0);
+//		}
 		try {
 			File file = new File(targetFileName);
-			FileOutputStream fOutS = new FileOutputStream(file);
-			DataOutputStream dOutS = new DataOutputStream(fOutS);
-			
+			BufferedWriter bufWrite = new BufferedWriter(new FileWriter(file));
+			bufWrite.write("StudentID,TotalNumberOfSemestersRegistered,Semester,NumCoursesTakenInTheSemester");
+			bufWrite.newLine();
 			for(String line:lines) {
-				dOutS.write((line+"\n").getBytes());
+				bufWrite.write(line);
+				bufWrite.newLine();
 			}
-			dOutS.close();
-			fOutS.close();
+			bufWrite.flush();
+			bufWrite.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 //			e.printStackTrace();

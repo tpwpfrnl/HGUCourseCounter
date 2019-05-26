@@ -10,21 +10,22 @@ public class Student {
 	
 	public Student(String studentId) {
 		this.studentId = studentId;
+		coursesTaken = new ArrayList<Course>();
+		semestersByYearAndSemester = new HashMap<String, Integer>();
 	}
 	
 	public void addCourse(Course newRecord) {
-		coursesTaken = new ArrayList<Course>();
 		coursesTaken.add(newRecord);
 	}
 	
 	public HashMap<String, Integer> getSemestersByYearAndSemester(){
-		semestersByYearAndSemester = new HashMap<String, Integer>();
-//		ArrayList<String> arrayList = new ArrayList<String>();
 		int index = 1;
 		for(Course curs:coursesTaken) {
-			String Seme = curs.getYearTaken() + "-" + curs.getSemesterCourseTaken();
-			semestersByYearAndSemester.put(Seme, index);
-			index++;
+			String seme = curs.getYearTaken() + "-" + curs.getSemesterCourseTaken();
+			if(semestersByYearAndSemester.containsKey(seme) == false) {
+				semestersByYearAndSemester.put(seme, index);
+				index++;
+			}
 		}
 		
 		return semestersByYearAndSemester;
