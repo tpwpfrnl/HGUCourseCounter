@@ -10,6 +10,15 @@ import edu.handong.analysis.datamodel.Student;
 import edu.handong.analysis.utils.NotEnoughArgumentException;
 import edu.handong.analysis.utils.Utils;
 
+import java.io.File;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+
 public class HGUCoursePatternAnalyzer {
 
 	private HashMap<String,Student> students;
@@ -20,6 +29,7 @@ public class HGUCoursePatternAnalyzer {
 	 * @param args
 	 */
 	public void run(String[] args) {
+		Options options = createOptions();
 		
 		try {
 			// when there are not enough arguments from CLI, it throws the NotEnoughArgmentException which must be defined by you.
@@ -90,13 +100,76 @@ public class HGUCoursePatternAnalyzer {
 		// TODO: Implement this method
 		ArrayList<String> number = new ArrayList<String>();
 		for(Student stu2:sortedStudents.values()) {
-			Integer lastSemester = stu2.getSemestersByYearAndSemester().size();
-			for(Integer takenSemester:stu2.getSemestersByYearAndSemester().values()) {
-				String result = stu2.getStudentId()+","+Integer.toString(lastSemester)+","+Integer.toString(takenSemester)+","+stu2.getNumCourseInNthSemester(takenSemester);
+			Map<String, Integer> treeMap = new TreeMap<String, Integer>(stu2.getSemestersByYearAndSemester());
+			Integer lastSemester = treeMap.size();
+			
+			for(Integer takenSemester:treeMap.values()) {
+				String result = stu2.getStudentId()+","+lastSemester+","+takenSemester+","+stu2.getNumCourseInNthSemester(takenSemester);
 				number.add(result);	
 			}
 		}
 		
 		return number; // do not forget to return a proper variable.
 	}
+	
+	private Options createOptions() {
+		Options options = new Options();
+		
+		// add options by using OptionBuilder
+		options.addOption(Option.builder("i").longOpt("input")
+				.desc("Set an input file path")
+				.hasArg()
+				.argName("Input path")
+				.required()
+				.build());
+		
+		// add options by using OptionBuilder
+		options.addOption(Option.builder("o").longOpt("output")
+				.desc("Set an output file path")
+				.hasArg()
+				.argName("Output path")
+				.required()
+				.build());
+
+		// add options by using OptionBuilder
+		options.addOption(Option.builder("a").longOpt("analysis")
+				.desc("1: Count courses per semester, 2: Count per course name and year")
+				.hasArg()
+				.argName("Analysis option")
+				.required()
+				.build());
+		
+		// add options by using OptionBuilder
+		options.addOption(Option.builder("c").longOpt("coursecode")
+				.desc("Course code for '-a 2' option")
+				.hasArg()
+				.argName("Course code")
+				.required()
+				.build());
+		
+		// add options by using OptionBuilder
+		options.addOption(Option.builder("s").longOpt("startyear")
+				.desc("Set the start year for analysis e.g., -s 2002")
+				.hasArg()
+				.argName("Start year for analysis")
+				.required()
+				.build());
+		
+		// add options by using OptionBuilder
+		options.addOption(Option.builder("e").longOpt("endyear")
+				.desc("Set the end year for analysis e.g., -e 2005")
+				.hasArg()
+				.argName("End year for analysis")
+				.required()
+				.build());
+		
+		// add options by using OptionBuilder
+		options.addOption(Option.builder("h").longOpt("help")
+				.desc("Show a Help page")
+				.argName("Help")
+				.build());
+		
+		return options;
+	}
+	
 }
