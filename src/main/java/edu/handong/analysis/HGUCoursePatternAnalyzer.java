@@ -144,22 +144,39 @@ public class HGUCoursePatternAnalyzer {
 	
 	private ArrayList<String> courseInformation(ArrayList<String> sortedStudents){
 		ArrayList<String> courInfo = new ArrayList<String>();
-		float rate=0;
-		for(String stu:sortedStudents) {
+		float rate = 0;
+		int total = 0;
+		int taken = 0;
+		String past = null;
+		ArrayList<String> stuIds = new ArrayList<String>();
+		for(String stu:sortedStudents) {			
 			Course cour = new Course(stu);
-			Student stu3 = new Student(stu);
-			int total = stu3.getTakenStudents(Integer.parseInt(startYear), Integer.parseInt(endYear), courseCode);
-			int taken = stu3.getTotalStudents(Integer.parseInt(startYear),Integer.parseInt(endYear));
-			if(total != 0 && taken != 0) {
-				rate = stu3.rate(taken, total);
+			Student stud = new Student(stu);
+			for(int i = Integer.parseInt(startYear); i <= Integer.parseInt(endYear); i++) {
+				for(int j = 1; j <= 4; j++) {
+					if(cour.getYearTaken() == i && cour.getSemesterCourseTaken() == j) {
+						if(cour.getCourseCode() == courseCode) {
+							taken++;
+						}
+						if(!stuIds.contains(cour.getStudentId())) {
+							total++;
+						}
+						if(cour.getYearTaken()<Integer.parseInt(startYear) || cour.getYearTaken()>Integer.parseInt(endYear)) {
+							continue;
+						}
+						if(total != 0 && taken != 0) {
+							rate = stud.rate(taken, total);
+						}
+						String line = cour.getYearTaken() + "," +cour.getSemesterCourseTaken() + ","
+								+ cour.getCourseCode() + "," + cour.getCourseName() + ","
+								+ total + "," + taken + "," + String.format("%.1f", rate) + "%";			
+						System.out.println(line);
+						courInfo.add(line);
+					}
+				}
+				total = 0;
+				taken = 0;
 			}
-			String line = cour.getYearTaken() + "," +cour.getSemesterCourseTaken() + ","
-					+ cour.getCourseCode() + "," + cour.getCourseName() + ","
-					+ stu3.getTotalStudents(Integer.parseInt(startYear),Integer.parseInt(endYear)) + "," +
-					stu3.getTakenStudents(Integer.parseInt(startYear), Integer.parseInt(endYear), courseCode) + ","
-					+ String.format("%.1f", rate) + "%";			
-//					System.out.println(line);
-			courInfo.add(line);	
 		}
 		return courInfo;
 	}
@@ -258,7 +275,7 @@ public class HGUCoursePatternAnalyzer {
 		// automatically generate the help statement
 		HelpFormatter formatter = new HelpFormatter();
 		String header = "HGUCoursePatternAnalyzer";
-		String footer ="\n---this program is made at HGU---";
+		String footer ="";
 		formatter.printHelp("HGUCoursePatternAnalyzer", header, options, footer, true);
 		
 	}
