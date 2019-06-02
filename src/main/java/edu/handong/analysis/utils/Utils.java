@@ -68,6 +68,7 @@ public class Utils {
 			bufWrite.newLine();
 			for(String line:lines) {
 				bufWrite.write(line);
+//				System.out.println(line);
 				bufWrite.newLine();
 			}
 			bufWrite.flush();

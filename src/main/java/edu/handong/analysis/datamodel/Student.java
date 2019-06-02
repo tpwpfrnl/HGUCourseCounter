@@ -47,45 +47,6 @@ public class Student {
 		}
 		return count;
 	}
-	
-	public int getTotalStudents(int startYear, int endYear){
-		int number = 0;
-		int current = startYear;
-		Course curs3 = new Course();
-//		for(Course curs3:coursesTaken) {
-			for(int semester = 1; semester <= 4; semester++) {
-				if(current == curs3.getYearTaken() && semester == curs3.getSemesterCourseTaken()) {
-					number++;						
-				}
-			}
-//			if(current == endYear) {
-//				break;
-//			}
-//			current++;
-//		}
-		return number;
-	}
-		
-	public int getTakenStudents(int startYear, int endYear, String courseCode) {
-		int number = 0;
-		int current = startYear;
-		Course curs4 = new Course();
-			for(int semester = 1; semester <= 4; semester++) {
-				if(current == curs4.getYearTaken() && semester == curs4.getSemesterCourseTaken() && curs4.getCourseCode() == courseCode) {
-					number++;						
-				}
-			}
-//			if(current == endYear) {
-//				break;
-//			}
-			current++;
-		
-		return number;
-	}
-		
-	public int rate(int taken, int total) {
-		return (taken/total)*100;
-	}
 
 	public String getStudentId() {
 		return studentId;

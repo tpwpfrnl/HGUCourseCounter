@@ -74,11 +74,8 @@ public class HGUCoursePatternAnalyzer {
 				String resultPath = output; // the file path where the results are saved.
 				ArrayList<String> lines = Utils.getCSV(dataPath, true);
 				ArrayList<String> linesToBeSaved2 = courseInformation(lines);
-				
-				
-//				System.out.println("6");
+//				System.out.println(linesToBeSaved2);
 				Utils.writeAFile(linesToBeSaved2, resultPath, 2);
-				
 //				System.out.println("helpMe");
 			}
 		}
@@ -149,13 +146,13 @@ public class HGUCoursePatternAnalyzer {
 		int taken = 0;
 		String past = null;
 		ArrayList<String> stuIds = new ArrayList<String>();
-		for(String stu:sortedStudents) {			
-			Course cour = new Course(stu);
-			Student stud = new Student(stu);
-			for(int i = Integer.parseInt(startYear); i <= Integer.parseInt(endYear); i++) {
-				for(int j = 1; j <= 4; j++) {
+		for(int i = Integer.parseInt(startYear); i <= Integer.parseInt(endYear); i++) {
+			for(int j = 1; j <= 4; j++) {
+				for(String stu:sortedStudents) {			
+					Course cour = new Course(stu);
+					Student stud = new Student(stu);
 					if(cour.getYearTaken() == i && cour.getSemesterCourseTaken() == j) {
-						if(cour.getCourseCode() == courseCode) {
+						if(cour.getCourseCode().equals(courseCode)) {
 							taken++;
 						}
 						if(!stuIds.contains(cour.getStudentId())) {
@@ -165,28 +162,23 @@ public class HGUCoursePatternAnalyzer {
 							continue;
 						}
 						if(total != 0 && taken != 0) {
-							rate = stud.rate(taken, total);
+							rate = (taken / total) * 100;
 						}
-						String line = cour.getYearTaken() + "," +cour.getSemesterCourseTaken() + ","
-								+ cour.getCourseCode() + "," + cour.getCourseName() + ","
-								+ total + "," + taken + "," + String.format("%.1f", rate) + "%";			
-						System.out.println(line);
-						courInfo.add(line);
+						if(cour.getCourseCode().equals(courseCode)) {
+							String line = cour.getYearTaken() + "," +cour.getSemesterCourseTaken() + ","
+									+ cour.getCourseCode() + "," + cour.getCourseName() + ","
+									+ total + "," + taken + "," + String.format("%.1f", rate) + "%";			
+							System.out.println(line);
+							courInfo.add(line);						
+						}
 					}
 				}
 				total = 0;
 				taken = 0;
 			}
 		}
-		return courInfo;
+	return courInfo;
 	}
-	
-//	private ArrayList<String> loadInformation(ArrayList<String> lines){
-//		ArrayList<String> student = new ArrayList<String>();
-//		
-//		
-//		return student;
-//	}
 	
 	private boolean parseOptions(Options options, String[] args) {
 		CommandLineParser parser = new DefaultParser();
