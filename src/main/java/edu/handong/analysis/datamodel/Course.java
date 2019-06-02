@@ -24,6 +24,10 @@ public class Course {
 		this.semesterCourseTaken = Integer.parseInt(courName[8].trim());
 	}
 
+	public Course() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getStudentId() {
 		return studentId;
 	}

@@ -2,6 +2,7 @@ package edu.handong.analysis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -10,16 +11,23 @@ import edu.handong.analysis.datamodel.Student;
 import edu.handong.analysis.utils.NotEnoughArgumentException;
 import edu.handong.analysis.utils.Utils;
 
-import java.io.File;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.csv.CSVRecord;
 
 public class HGUCoursePatternAnalyzer {
+	
+	String input;
+	String output;
+	String analysis;
+	String courseCode;
+	String startYear;
+	String endYear;
+	boolean help;
 
 	private HashMap<String,Student> students;
 	
@@ -31,31 +39,52 @@ public class HGUCoursePatternAnalyzer {
 	public void run(String[] args) {
 		Options options = createOptions();
 		
-		try {
-			// when there are not enough arguments from CLI, it throws the NotEnoughArgmentException which must be defined by you.
-			if(args.length<2)
-				throw new NotEnoughArgumentException();
-		} catch (NotEnoughArgumentException e) {
-			System.out.println(e.getMessage());
-			System.exit(0);
+		if(parseOptions(options, args)) {
+			if(help) {
+				printHelp(options);
+				return;
+			}
+			if(analysis.equals("1")){
+				try {
+					// when there are not enough arguments from CLI, it throws the NotEnoughArgmentException which must be defined by you.
+					if(args.length<2)
+						throw new NotEnoughArgumentException();
+				} catch (NotEnoughArgumentException e) {
+					System.out.println(e.getMessage());
+					System.exit(0);
+				}
+				String dataPath = input; // csv file to be analyzed
+				String resultPath = output; // the file path where the results are saved.
+				
+				ArrayList<String> lines = Utils.getLines(dataPath, true);
+				
+				students = loadStudentCourseRecords(lines);
+				
+				// To sort HashMap entries by key values so that we can save the results by student ids in ascending order.
+				Map<String, Student> sortedStudents = new TreeMap<String,Student>(students); 
+				
+				// Generate result lines to be saved.
+				ArrayList<String> linesToBeSaved = countNumberOfCoursesTakenInEachSemester(sortedStudents);
+				
+				// Write a file (named like the value of resultPath) with linesTobeSaved.
+				Utils.writeAFile(linesToBeSaved, resultPath, 1);
+				
+			}else if(analysis.equals("2")){
+
+				String dataPath = input; // csv file to be analyzed
+				String resultPath = output; // the file path where the results are saved.
+				ArrayList<String> lines = Utils.getCSV(dataPath, true);
+				ArrayList<Student> students = loadInformation(lines);
+				ArrayList<String> linesToBeSaved2 = courseInformation(students);
+				Utils.writeAFile(linesToBeSaved2, resultPath, 2);
+				
+				System.out.println("helpMe");
+			}
 		}
 		
-		String dataPath = args[0]; // csv file to be analyzed
-		String resultPath = args[1]; // the file path where the results are saved.
-		ArrayList<String> lines = Utils.getLines(dataPath, true);
-		
-		students = loadStudentCourseRecords(lines);
-		
-		// To sort HashMap entries by key values so that we can save the results by student ids in ascending order.
-		Map<String, Student> sortedStudents = new TreeMap<String,Student>(students); 
-		
-		// Generate result lines to be saved.
-		ArrayList<String> linesToBeSaved = countNumberOfCoursesTakenInEachSemester(sortedStudents);
-		
-		// Write a file (named like the value of resultPath) with linesTobeSaved.
-		Utils.writeAFile(linesToBeSaved, resultPath);
 	}
 	
+
 	/**
 	 * This method create HashMap<String,Student> from the data csv file. Key is a student id and the corresponding object is an instance of Student.
 	 * The Student instance have all the Course instances taken by the student.
@@ -110,6 +139,82 @@ public class HGUCoursePatternAnalyzer {
 		}
 		
 		return number; // do not forget to return a proper variable.
+	}
+	
+	private ArrayList<String> courseInformation(ArrayList<Student> sortedStudents){
+		ArrayList<String> courInfo = new ArrayList<String>();
+		Course cour = new Course();
+		float rate=0;
+		for(Student stu3:sortedStudents) {
+			int total = stu3.getTakenStudents(Integer.parseInt(startYear), Integer.parseInt(endYear), courseCode);
+			int taken = stu3.getTotalStudents(Integer.parseInt(startYear),Integer.parseInt(endYear));
+			if(total != 0 && taken != 0) {
+				rate = stu3.rate(taken, total);
+			}
+			String line = cour.getYearTaken() + "," +cour.getSemesterCourseTaken() + ","
+					+ cour.getCourseCode() + "," + cour.getCourseName() + ","
+					+ stu3.getTotalStudents(Integer.parseInt(startYear),Integer.parseInt(endYear)) + "," +
+					stu3.getTakenStudents(Integer.parseInt(startYear), Integer.parseInt(endYear), courseCode) + ","
+					+ String.format("%.1f", rate) + "%";			
+					System.out.println(line);
+			courInfo.add(line);	
+		}
+		return courInfo;
+	}
+	
+	private ArrayList<Student> loadInformation(ArrayList<String> lines){
+		ArrayList<Student> student = new ArrayList<Student>();
+		ArrayList<Course> arrayCourses = new ArrayList<Course>();
+		String courseName = new String();
+		Student student1 = new Student();
+		int totalnumber = 0;
+		int studentnumber = 0;
+		String studentId = null;
+		int j = 1;
+		for(String line:lines) {
+			Course lineCourse = new Course(line);
+			arrayCourses.add(lineCourse);
+			for(int i = Integer.parseInt(startYear); i <= Integer.parseInt(endYear) && j <= 4; i++) {
+				for(Course cour:arrayCourses) {
+//				Course cour22 = new Course();
+					Student stu22 = new Student(line);
+					studentnumber = student1.getTakenStudents(Integer.parseInt(startYear), Integer.parseInt(endYear), courseCode);
+					totalnumber = student1.getTotalStudents(Integer.parseInt(startYear), Integer.parseInt(endYear));
+					cour.setYearTaken(i);
+					cour.setSemesterCourseTaken(j);
+					cour.setCourseCode(courseCode);
+					cour.setCourseName(courseName);
+					stu22.setTotalStudent(totalnumber);
+					stu22.setTakenStudent(studentnumber);
+					student.add(stu22);
+					j++;
+				}			
+			}
+		}
+		return student;
+	}
+	
+	private boolean parseOptions(Options options, String[] args) {
+		CommandLineParser parser = new DefaultParser();
+
+		try {
+
+			CommandLine cmd = parser.parse(options, args);
+
+			input = cmd.getOptionValue("i");
+			output = cmd.getOptionValue("o");
+			analysis = cmd.getOptionValue("a");
+			courseCode = cmd.getOptionValue("c");
+			startYear = cmd.getOptionValue("s");
+			endYear = cmd.getOptionValue("e");
+			help = cmd.hasOption("h");
+			
+		} catch (Exception e) {
+			printHelp(options);
+			return false;
+		}
+
+		return true;
 	}
 	
 	private Options createOptions() {
@@ -170,6 +275,15 @@ public class HGUCoursePatternAnalyzer {
 				.build());
 		
 		return options;
+	}
+	
+	private void printHelp(Options options) {
+		// automatically generate the help statement
+		HelpFormatter formatter = new HelpFormatter();
+		String header = "HGUCoursePatternAnalyzer";
+		String footer ="\n---this program is made at HGU---";
+		formatter.printHelp("HGUCoursePatternAnalyzer", header, options, footer, true);
+		
 	}
 	
 }

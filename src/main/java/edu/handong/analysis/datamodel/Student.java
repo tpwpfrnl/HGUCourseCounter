@@ -7,6 +7,8 @@ public class Student {
 	private String studentId;
 	private ArrayList<Course> coursesTaken;
 	private HashMap<String, Integer> semestersByYearAndSemester;
+	private int totalStudent;
+	private int takenStudent;
 	
 	public Student(String studentId) {
 		this.studentId = studentId;
@@ -14,6 +16,10 @@ public class Student {
 		semestersByYearAndSemester = new HashMap<String, Integer>();
 	}
 	
+	public Student() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public void addCourse(Course newRecord) {
 		coursesTaken.add(newRecord);
 	}
@@ -41,6 +47,44 @@ public class Student {
 		}
 		return count;
 	}
+	
+	public int getTotalStudents(int startYear, int endYear){
+		int number = 0;
+		int current = startYear;
+		for(Course curs3:coursesTaken) {
+			for(int semester = 1; semester <= 4; semester++) {
+				if(current == curs3.getYearTaken() && semester == curs3.getSemesterCourseTaken()) {
+					number++;						
+				}
+			}
+			if(current == endYear) {
+				break;
+			}
+			current++;
+		}
+		return number;
+	}
+		
+	public int getTakenStudents(int startYear, int endYear, String courseCode) {
+		int number = 0;
+		int current = startYear;
+		for(Course curs4:coursesTaken) {
+			for(int semester = 1; semester <= 4; semester++) {
+				if(current == curs4.getYearTaken() && semester == curs4.getSemesterCourseTaken() && curs4.getCourseCode() == courseCode) {
+					number++;						
+				}
+			}
+			if(current == endYear) {
+				break;
+			}
+			current++;
+		}
+		return number;
+	}
+		
+	public int rate(int taken, int total) {
+		return (taken/total)*100;
+	}
 
 	public String getStudentId() {
 		return studentId;
@@ -61,5 +105,12 @@ public class Student {
 	public void setSemestersByYearAndSemester(HashMap<String, Integer> semestersByYearAndSemester) {
 		this.semestersByYearAndSemester = semestersByYearAndSemester;
 	}
-
+	
+	public void setTotalStudent(int totalStudent) {
+		this.totalStudent = totalStudent;
+	}
+	
+	public void setTakenStudent(int takenStudent) {
+		this.takenStudent = takenStudent;
+	}
 }

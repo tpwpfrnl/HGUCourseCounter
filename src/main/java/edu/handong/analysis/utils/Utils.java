@@ -3,10 +3,15 @@ package edu.handong.analysis.utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 public class Utils {
 	public static ArrayList<String> getLines(String filel, boolean removeHeader){
@@ -31,7 +36,7 @@ public class Utils {
 		}
 		return read;
 	}
-	public static void writeAFile(ArrayList<String> lines, String targetFileName) {
+	public static void writeAFile(ArrayList<String> lines, String targetFileName, int analysis) {
 //		try {
 //			File file = new File(targetFileName);
 //			FileOutputStream fOutS = new FileOutputStream(file);
@@ -48,10 +53,18 @@ public class Utils {
 //			System.err.println("The file path does not exist. Please check your CLI argument!");
 //			System.exit(0);
 //		}
+		File directory = new File(targetFileName).getParentFile();
+		if(!directory.exists()) {
+			directory.mkdir();
+		}
 		try {
 			File file = new File(targetFileName);
 			BufferedWriter bufWrite = new BufferedWriter(new FileWriter(file));
-			bufWrite.write("StudentID,TotalNumberOfSemestersRegistered,Semester,NumCoursesTakenInTheSemester");
+			if(analysis == 1) {
+				bufWrite.write("StudentID,TotalNumberOfSemestersRegistered,Semester,NumCoursesTakenInTheSemester");		
+			}else if(analysis == 2) {
+				bufWrite.write("Year,Semester,CourseCode,CourseName,TotalStudents,StudentsTaken,Rate");
+			}
 			bufWrite.newLine();
 			for(String line:lines) {
 				bufWrite.write(line);
@@ -65,6 +78,39 @@ public class Utils {
 			System.err.println("The file path does not exist. Please check your CLI argument!");
 			System.exit(0);
 		}
+	}
+	
+	public static ArrayList<String> getCSV(String file, boolean removeHeader){
+		
+		ArrayList<String> readcsv = new ArrayList<String>();
+		CSVParser csvParser = null;
+		try {
+			csvParser = new CSVParser(new FileReader(file), CSVFormat.DEFAULT
+					.withFirstRecordAsHeader()
+					.withIgnoreHeaderCase()
+					.withTrim());
+//			CSVParser csvParser = new CSVParser(new FileReader(file), CSVFormat.DEFAULT
+//					.withHeader());
+			
+			for(CSVRecord record:csvParser) {
+				String line = record.get("StudentID")+","+record.get("YearMonthGraduated")+","
+			+record.get("FistMajor")+","+record.get("SecondMajor")+","+record.get("CourseCode")+","
+			+record.get("CourseName")+","+record.get("CourseCredit")+","+record.get("YearTaken")+
+			","+record.get("SemesterTaken");
+				readcsv.add(line);
+			}
+			
+			csvParser.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.err.println("The file path does not exist. Please check your CLI argument!");
+			System.exit(0);
+		}
+		
+		if(removeHeader) {
+			readcsv.remove(0);
+		}
+		return readcsv;
 	}
 
 }
