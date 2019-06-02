@@ -89,8 +89,6 @@ public class Utils {
 					.withFirstRecordAsHeader()
 					.withIgnoreHeaderCase()
 					.withTrim());
-//			CSVParser csvParser = new CSVParser(new FileReader(file), CSVFormat.DEFAULT
-//					.withHeader());
 			
 			for(CSVRecord record:csvParser) {
 				String line = record.get("StudentID")+","+record.get("YearMonthGraduated")+","
@@ -107,9 +105,9 @@ public class Utils {
 			System.exit(0);
 		}
 		
-		if(removeHeader) {
-			readcsv.remove(0);
-		}
+//		if(removeHeader) {
+//			readcsv.remove(0);
+//		}
 		return readcsv;
 	}
 

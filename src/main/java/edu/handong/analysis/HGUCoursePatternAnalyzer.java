@@ -70,15 +70,16 @@ public class HGUCoursePatternAnalyzer {
 				Utils.writeAFile(linesToBeSaved, resultPath, 1);
 				
 			}else if(analysis.equals("2")){
-
 				String dataPath = input; // csv file to be analyzed
 				String resultPath = output; // the file path where the results are saved.
 				ArrayList<String> lines = Utils.getCSV(dataPath, true);
-				ArrayList<Student> students = loadInformation(lines);
-				ArrayList<String> linesToBeSaved2 = courseInformation(students);
+				ArrayList<String> linesToBeSaved2 = courseInformation(lines);
+				
+				
+//				System.out.println("6");
 				Utils.writeAFile(linesToBeSaved2, resultPath, 2);
 				
-				System.out.println("helpMe");
+//				System.out.println("helpMe");
 			}
 		}
 		
@@ -141,11 +142,12 @@ public class HGUCoursePatternAnalyzer {
 		return number; // do not forget to return a proper variable.
 	}
 	
-	private ArrayList<String> courseInformation(ArrayList<Student> sortedStudents){
+	private ArrayList<String> courseInformation(ArrayList<String> sortedStudents){
 		ArrayList<String> courInfo = new ArrayList<String>();
-		Course cour = new Course();
 		float rate=0;
-		for(Student stu3:sortedStudents) {
+		for(String stu:sortedStudents) {
+			Course cour = new Course(stu);
+			Student stu3 = new Student(stu);
 			int total = stu3.getTakenStudents(Integer.parseInt(startYear), Integer.parseInt(endYear), courseCode);
 			int taken = stu3.getTotalStudents(Integer.parseInt(startYear),Integer.parseInt(endYear));
 			if(total != 0 && taken != 0) {
@@ -156,43 +158,18 @@ public class HGUCoursePatternAnalyzer {
 					+ stu3.getTotalStudents(Integer.parseInt(startYear),Integer.parseInt(endYear)) + "," +
 					stu3.getTakenStudents(Integer.parseInt(startYear), Integer.parseInt(endYear), courseCode) + ","
 					+ String.format("%.1f", rate) + "%";			
-					System.out.println(line);
+//					System.out.println(line);
 			courInfo.add(line);	
 		}
 		return courInfo;
 	}
 	
-	private ArrayList<Student> loadInformation(ArrayList<String> lines){
-		ArrayList<Student> student = new ArrayList<Student>();
-		ArrayList<Course> arrayCourses = new ArrayList<Course>();
-		String courseName = new String();
-		Student student1 = new Student();
-		int totalnumber = 0;
-		int studentnumber = 0;
-		String studentId = null;
-		int j = 1;
-		for(String line:lines) {
-			Course lineCourse = new Course(line);
-			arrayCourses.add(lineCourse);
-			for(int i = Integer.parseInt(startYear); i <= Integer.parseInt(endYear) && j <= 4; i++) {
-				for(Course cour:arrayCourses) {
-//				Course cour22 = new Course();
-					Student stu22 = new Student(line);
-					studentnumber = student1.getTakenStudents(Integer.parseInt(startYear), Integer.parseInt(endYear), courseCode);
-					totalnumber = student1.getTotalStudents(Integer.parseInt(startYear), Integer.parseInt(endYear));
-					cour.setYearTaken(i);
-					cour.setSemesterCourseTaken(j);
-					cour.setCourseCode(courseCode);
-					cour.setCourseName(courseName);
-					stu22.setTotalStudent(totalnumber);
-					stu22.setTakenStudent(studentnumber);
-					student.add(stu22);
-					j++;
-				}			
-			}
-		}
-		return student;
-	}
+//	private ArrayList<String> loadInformation(ArrayList<String> lines){
+//		ArrayList<String> student = new ArrayList<String>();
+//		
+//		
+//		return student;
+//	}
 	
 	private boolean parseOptions(Options options, String[] args) {
 		CommandLineParser parser = new DefaultParser();
