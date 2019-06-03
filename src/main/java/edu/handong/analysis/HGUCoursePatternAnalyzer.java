@@ -144,40 +144,45 @@ public class HGUCoursePatternAnalyzer {
 		float rate = 0;
 		int total = 0;
 		int taken = 0;
-		String past = null;
+		String liner = null;
+		ArrayList<Course> courses = new ArrayList<Course>();
+		for(String line:sortedStudents) {
+			Course course = new Course(line);
+			courses.add(course);
+		}
+		
 		ArrayList<String> stuIds = new ArrayList<String>();
 		for(int i = Integer.parseInt(startYear); i <= Integer.parseInt(endYear); i++) {
 			for(int j = 1; j <= 4; j++) {
 				for(String stu:sortedStudents) {			
 					Course cour = new Course(stu);
-					Student stud = new Student(stu);
 					if(cour.getYearTaken() == i && cour.getSemesterCourseTaken() == j) {
 						if(cour.getCourseCode().equals(courseCode)) {
 							taken++;
 						}
 						if(!stuIds.contains(cour.getStudentId())) {
+//							stuIds.add(cour.getStudentId());
 							total++;
-						}
-						if(cour.getYearTaken()<Integer.parseInt(startYear) || cour.getYearTaken()>Integer.parseInt(endYear)) {
-							continue;
-						}
-						if(total != 0 && taken != 0) {
-							rate = (taken / total) * 100;
-						}
-						if(cour.getCourseCode().equals(courseCode)) {
-							String line = cour.getYearTaken() + "," +cour.getSemesterCourseTaken() + ","
-									+ cour.getCourseCode() + "," + cour.getCourseName() + ","
-									+ total + "," + taken + "," + String.format("%.1f", rate) + "%";			
-							System.out.println(line);
-							courInfo.add(line);						
-						}
+						}							
+					}
+					if(total != 0) {
+						rate = (taken / total) * 100;
+					}else{
+						rate = 0;
+					}
+					if(cour.getCourseCode().equals(courseCode)) {						
+						liner = i + "," + j + ","
+								+ cour.getCourseCode() + "," + cour.getCourseName() + ","
+								+ total + "," + taken + "," + String.format("%.1f", rate) + "%";
 					}
 				}
+							System.out.println(liner);
+				courInfo.add(liner);
 				total = 0;
 				taken = 0;
 			}
 		}
-	return courInfo;
+		return courInfo;
 	}
 	
 	private boolean parseOptions(Options options, String[] args) {
